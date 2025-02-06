@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário Fiscalização</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            padding: 10px; /* Reduz o padding */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .secao {
+            margin-bottom: 15px; /* Reduz o espaçamento entre as seções */
+            width: 95%; /* Largura um pouco menor */
+            text-align: left;
+            border: 1px solid #ddd; /* Adiciona borda */
+            padding: 8px; /* Reduz o padding interno */
+            border-radius: 5px; /* Arredonda os cantos */
+            box-sizing: border-box; /* Garante que o padding não aumente a largura */
+        }
+
+        .secao h3 {
+            background-color: #4CAF50;
+            color: white;
+            padding: 6px; /* Reduz o padding do título */
+            border-radius: 5px 5px 0 0; /* Arredonda apenas os cantos superiores */
+            margin: -8px -8px 8px -8px; /* Ajusta a margem para alinhar com a borda */
+            font-size: 1.1em; /* Tamanho da fonte um pouco menor */
+        }
+
+        .linha {
+            display: flex;
+            flex-wrap: wrap; /* Permite que os elementos quebrem para a próxima linha */
+            gap: 8px; /* Espaçamento entre os elementos */
+        }
+
+        .coluna {
+            flex: 1 1 150px; /* Largura mínima de 150px e cresce igualmente */
+            box-sizing: border-box; /* Garante que o padding não aumente a largura */
+        }
+
+        label {
+            display: block; /* Labels em bloco */
+            margin-bottom: 3px; /* Reduz o espaçamento abaixo do label */
+            font-size: 0.9em; /* Tamanho da fonte menor */
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 6px; /* Reduz o padding dos campos */
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 0.9em; /* Tamanho da fonte menor */
+        }
+
+        table {
+            width: 100%;
+            margin-top: 8px; /* Reduz a margem superior */
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 4px; /* Reduz o padding das células */
+            text-align: left;
+            border: 1px solid #ddd;
+            font-size: 0.8em; /* Reduz o tamanho da fonte das células */
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .btn {
+            padding: 6px 12px; /* Reduz o padding do botão */
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 8px; /* Adiciona margem superior */
+            font-size: 0.9em; /* Tamanho da fonte menor */
+        }
+
+        .btn:hover {
+            background-color: #45a049;
+        }
+
+        button.remove-btn {
+            padding: 4px 6px; /* Reduz o padding do botão remover */
+            background-color: #ff4c4c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8em; /* Tamanho da fonte menor */
+        }
+
+        button.remove-btn:hover {
+            background-color: #e43d3d;
+        }
+
+        @media (max-width: 600px) { /* Ajusta para telas menores */
+            .coluna {
+                flex: 1 1 100%; /* Ocupa toda a largura em telas menores */
+            }
+
+            table {
+                display: block;
+                overflow-x: auto; /* Adiciona barra de rolagem horizontal */
+            }
+        }
+    </style>
+    <script>
+        function adicionarLinha() {
+    var tabela = document.getElementById("tabela");
+    var novaLinha = tabela.insertRow(-1);
+    var primeiraLinha = tabela.rows[1];
+
+    for (var i = 0; i < primeiraLinha.cells.length - 1; i++) {
+        var novaCelula = novaLinha.insertCell(i);
+        var inputOriginal = primeiraLinha.cells[i].querySelector('input, select, textarea');
+        var novoInput;
+
+        if (inputOriginal.tagName.toLowerCase() === 'select') {
+            novoInput = inputOriginal.cloneNode(true);
+        } else if (inputOriginal.tagName.toLowerCase() === 'textarea') {
+            novoInput = inputOriginal.cloneNode(true);
+        } else {
+            novoInput = inputOriginal.cloneNode();
+        }
+
+        novoInput.name = inputOriginal.name; 
+        novaCelula.appendChild(novoInput);
+    }
+
+    var celulaAcoes = novaLinha.insertCell(primeiraLinha.cells.length - 1);
+    var botaoRemover = document.createElement('button');
+    botaoRemover.textContent = 'Remover';
+    botaoRemover.type = 'button';
+    botaoRemover.setAttribute('onclick', 'removerLinha(this)');
+    celulaAcoes.appendChild(botaoRemover);
+}
+
+function removerLinha(botao) {
+    var linha = botao.parentNode.parentNode;
+    linha.parentNode.removeChild(linha);
+}
+
+function validarFormulario() {
+    var tabela = document.getElementById("tabela");
+    var linhas = tabela.rows;
+    for (var i = 1; i < linhas.length; i++) {
+        var inputs = linhas[i].querySelectorAll('input, select, textarea');
+        for (var j = 0; j < inputs.length; j++) {
+            if (inputs[j].value === "" && inputs[j].hasAttribute('required')) {
+                alert("Por favor, preencha todos os campos obrigatórios!");
+                return false;
+            }
+        }
+    }
+    return true;
+}
+    </script>
+</head>
+<body>
+    <h2>Cadastro de Fiscalização</h2>
+    <p>* Campos obrigatórios</p>
+
+    <form action="{% url 'home' %}" method="POST" onsubmit="return validarFormulario()">
+        {% csrf_token %}
+
+        <!-- Seção 1: Informações Gerais da UT -->
+        <div class="secao">
+            <h3>Seção 1: Informações Gerais da UT</h3>
+            <div class="linha">
+                <div class="coluna">
+                    <label for="codigo_propriedade">Código da Propriedade *</label>
+                    <input type="text" id="codigo_propriedade" name="codigo_propriedade" required>
+                </div>
+                <div class="coluna">
+                    <label for="codigo_ut">Código da UT *</label>
+                    <input type="number" id="codigo_ut" name="codigo_ut" required>
+                </div>
+                <div class="coluna">
+                    <label for="municipio">Município *</label>
+                    <select id="municipio" name="municipio" required>
+                        <option value="">Selecione</option>
+                        <option value="Afonso Cláudio">Afonso Cláudio</option>
+                        <option value="Laranja da Terra">Laranja da Terra</option>
+                        <option value="Baixo Guandu">Baixo Guandu</option>
+                        <option value="São Roque">São Roque</option>
+                        <option value="Santa Teresa">Santa Teresa</option>
+                        <option value="Colatina">Colatina</option>
+                    </select>
+                </div>
+                <div class="coluna">
+                    <label for="empresa">Empresa *</label>
+                    <select id="empresa" name="empresa" required>
+                        <option value="">Selecione</option>
+                        <option value="Inoversa">Inoversa</option>
+                        <option value="Reflore">Reflore</option>
+                        <option value="Gênese">Gênese</option>
+                        <option value="Sartori">Sartori</option>
+                        <option value="Vital">Vital</option>
+                    </select>
+                </div>
+            </div>
+            <div class="linha">
+                <div class="coluna">
+                    <label for="fiscal_responsavel">Fiscal Responsável *</label>
+                    <input type="text" id="fiscal_responsavel" name="fiscal_responsavel" required>
+                </div>
+                <div class="coluna">
+                    <label for="mes_medicao">Mês de Medição *</label>
+                    <select id="mes_medicao" name="mes_medicao" required>
+                        <option value="">Selecione</option>
+                        <option value="JAN 2025">JAN 2025</option>
+                        <option value="FEV 2025">FEV 2025</option>
+                        <option value="MAR 2025">MAR 2025</option>
+                        <option value="ABR 2025">ABR 2025</option>
+                        <option value="MAI 2025">MAI 2025</option>
+                        <option value="JUN 2025">JUN 2025</option>
+                        <option value="JUL 2025">JUL 2025</option>
+                        <option value="AGO 2025">AGO 2025</option>
+                        <option value="SET 2025">SET 2025</option>
+                        <option value="OUT 2025">OUT 2025</option>
+                        <option value="NOV 2025">NOV 2025</option>
+                        <option value="DEZ 2025">DEZ 2025</option>
+                    </select>
+                </div>
+                <div class="coluna">
+                    <label for="tecnica">Técnica *</label>
+                    <select id="tecnica" name="metodo" required>
+                        <option value="">Selecione</option>
+                        <option value="CRN">CRN</option>
+                        <option value="PT">PT</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabela de Fiscalização -->
+        <table id="tabela">
+            <thead>
+                <tr>
+                    <th style="width: 10%;">ID Parcela *</th>
+                    <th style="width: 10%;">Fase *</th>
+                    <th style="width: 10%;">Atividade *</th>
+                    <th style="width: 10%;">Área Medição (ha) *</th>
+                    <th style="width: 10%;">Espaçamento</th>
+                    <th style="width: 10%;">Nota</th>
+                    <th style="width: 10%;">Quantidade</th>
+                    <th style="width: 10%;">Observação</th>
+                    <th style="width: 5%;">Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input type="number" name="id_parcela[]" required></td>
+                    <td>
+                        <select name="fase[]" required>
+                            <option value="">Selecione</option>
+                            <option value="Implantacao">Implantação</option>
+                            <option value="Manutencao">Manutenção</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select name="atividades[]" required>
+                            <option value="">Selecione</option>
+                            <option value="preparo_mecanizado">Preparo mecanizado</option>
+                            <option value="alinhamento_marcacao">Alinhamento e Marcação</option>
+                            <option value="capina_quimica">Capina Química</option>
+                            <option value="controle_formiga">Controle de Formiga</option>
+                            <option value="rocada">Roçada</option>
+                            <option value="bercos_quali_quanti">Berços - Qualidade e Quantidade</option>
+                            <option value="micro_covas_quali_quanti">Micro-covas - Qualidade e Quantidade</option>
+                            <option value="calagem_berco">Calagem (Berços)</option>
+                            <option value="adubacao_plantio">Adubação de Plantio</option>
+                            <option value="plantio_replantio_mudas">Plantio/Replantio de Mudas</option>
+                            <option value="semeadura">Semeadura Direta</option>
+                            <option value="adubacao_cobertura_regenerantes">Adubação de Cobertura/Regenerantes</option>
+                            <option value="coroamento">Coroamento</option>
+                        </select>
+                    </td>
+                    <td><input type="number" name="area_medicao_ha[]" step="0.0001" required></td>
+                    <td><input type="text" name="espacamento[]"></td>
+                    <td>
+                        <select name="nota[]">
+                            <option value="">Selecione</option>
+                            <option value="refazer_50">Refazer (50%)</option>
+                            <option value="razoavel_70">Razoável (70%)</option>
+                            <option value="adequado_100">Adequado (100%)</option>
+                        </select>
+                    </td>
+                    <td><input type="number" name="quantidade[]" required></td>
+                    <td><textarea name="observacao[]"></textarea></td>
+                    <td><button type="button" onclick="removerLinha(this)">Remover</button></td>
+                </tr>
+            </tbody>
+        </table>
+        <button type="button" onclick="adicionarLinha()">Adicionar Linha</button><br><br>
+        <button type="submit" class="btn">Salvar</button>
+    </form>
+</body>
+</html>

@@ -1,8 +1,9 @@
 from django.urls import path
-from . import views
-
+from .views import home, formulario,sync_data
 
 urlpatterns = [
-    path('', views.home, name='home'),
-    path('formulario/', views.formulario, name='formulario')
+    path("", home, name="home"),
+    path("formulario/", formulario, name="formulario"),
+    path("sync/", sync_data, name="sync_data"),
+    
 ]

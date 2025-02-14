@@ -58,10 +58,29 @@ class Fiscalizacao(models.Model):
         ("coroamento", "Coroamento")
     ]
 
+    OPCOES_FISCAIS = [
+        ("andre_b", "André B."),
+        ("alan_z", "Alan Z."),
+        ("bruno_l", "Bruno L."),
+        ("cristhiam_r", "Cristhiam R."),
+        ("diego_b", "Diego B."),
+        ("fabrina_n", "Fabrina N."),
+        ("felipe_b", "Felipe B."),
+        ("graciane_c", "Graciane C."),
+        ("joao_b", "João B."),
+        ("kelwin_l", "Kelwin L."),
+        ("rafael_p", "Rafael P."),
+        ("samuel_o", "Samuel O."),
+        ("tercio_p", "Tercio P."),
+        ("thiago_d", "Thiago D."),
+        ("vinicius_d", "Vinicius D."),
+    ]
+
     # Campos Existentes
+    
     codigo_propriedade = models.CharField(max_length=10, blank=True, null=True)
     codigo_ut = models.IntegerField(blank=True, null=True)
-    fiscal_responsavel = models.CharField(max_length=50, blank=True, null=True)
+    fiscal_responsavel = models.CharField(max_length=50, choices=OPCOES_FISCAIS, blank=True, null=True)
     municipio = models.CharField(
         max_length=50, choices=OPCOES_MUNICIPIOS, blank=True, null=True)
     empresa = models.CharField(
@@ -70,18 +89,29 @@ class Fiscalizacao(models.Model):
         max_length=50, choices=OPCOES_MES, blank=True, null=True)
     metodo = models.CharField(max_length=50, choices=[(
         'Plantio Total', 'Plantio Total'), ('CRN', 'CRN')], blank=True, null=True)
+    parcela_t = models.CharField(max_length=50, choices=[(
+        '4x25m', '4x25m'), ('6x10m', '6x10m')], blank=True, null=True)
+    ui = models.CharField(max_length=10, blank=True, null=True)
     id_parcela = models.IntegerField(blank=True, null=True)
     fase = models.CharField(max_length=50, choices=[(
         'Implantacao', 'Implantação'), ('Manutencao', 'Manutenção')], blank=True, null=True)
     atividades = models.CharField(
         max_length=50, choices=OPCOES_ATIVIDADES, blank=True, null=True)
     area_medicao_ha = models.DecimalField(
-        max_digits=10, decimal_places=4, null=True, blank=True)
+        max_digits=10, decimal_places=2, null=True, blank=True)
     espacamento = models.CharField(max_length=50, blank=True, null=True)
     nota = models.CharField(
         max_length=50, choices=OPCOES_NOTAS, blank=True, null=True)
     quantidade = models.IntegerField(blank=True, null=True)
     observacao = models.TextField(blank=True, null=True)
 
-    def __str__(self):
-        return f"{self.id_parcela} - {self.cod_prop} ({self.municipio})"
+    def save(self, *args, **kwargs):
+        # Garantir que 'codigo_propriedade' esteja em maiúsculas
+        if self.codigo_propriedade:
+            self.codigo_propriedade = self.codigo_propriedade.upper()
+
+        if self.espacamento:
+            # Remover espaços e garantir que o valor seja '3x3' (sem espaços extras)
+            self.espacamento = self.espacamento.replace(" ", "").lower().replace("X", "x")
+
+        super(Fiscalizacao, self).save(*args, **kwargs)

@@ -2,181 +2,167 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Formulário Fiscalização</title>
-    <style>
+    <link rel="manifest" href="/static/manifest.json">
+    
+       <style>
+        
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
-            padding: 10px; /* Reduz o padding */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            margin: 20px;
+            padding: 0;
+            background-color: #f4f4f9;
         }
-
-        .secao {
-            margin-bottom: 15px; /* Reduz o espaçamento entre as seções */
-            width: 95%; /* Largura um pouco menor */
-            text-align: left;
-            border: 1px solid #ddd; /* Adiciona borda */
-            padding: 8px; /* Reduz o padding interno */
-            border-radius: 5px; /* Arredonda os cantos */
-            box-sizing: border-box; /* Garante que o padding não aumente a largura */
-        }
-
-        .secao h3 {
-            background-color: #4CAF50;
-            color: white;
-            padding: 6px; /* Reduz o padding do título */
-            border-radius: 5px 5px 0 0; /* Arredonda apenas os cantos superiores */
-            margin: -8px -8px 8px -8px; /* Ajusta a margem para alinhar com a borda */
-            font-size: 1.1em; /* Tamanho da fonte um pouco menor */
-        }
-
-        .linha {
-            display: flex;
-            flex-wrap: wrap; /* Permite que os elementos quebrem para a próxima linha */
-            gap: 8px; /* Espaçamento entre os elementos */
-        }
-
-        .coluna {
-            flex: 1 1 150px; /* Largura mínima de 150px e cresce igualmente */
-            box-sizing: border-box; /* Garante que o padding não aumente a largura */
-        }
-
-        label {
-            display: block; /* Labels em bloco */
-            margin-bottom: 3px; /* Reduz o espaçamento abaixo do label */
-            font-size: 0.9em; /* Tamanho da fonte menor */
-        }
-
-        input[type="text"],
-        input[type="number"],
-        select {
+        .table-container {
             width: 100%;
-            padding: 6px; /* Reduz o padding dos campos */
+            max-width: 100%;
+            overflow: auto;
+            margin-top: 20px;
             border: 1px solid #ddd;
-            border-radius: 5px;
-            box-sizing: border-box;
-            font-size: 0.9em; /* Tamanho da fonte menor */
         }
-
         table {
             width: 100%;
-            margin-top: 8px; /* Reduz a margem superior */
             border-collapse: collapse;
         }
-
-        th,
-        td {
-            padding: 4px; /* Reduz o padding das células */
-            text-align: left;
+        th, td {
+            padding: 12px;
+            text-align: center;
             border: 1px solid #ddd;
-            font-size: 0.8em; /* Reduz o tamanho da fonte das células */
         }
-
         th {
-            background-color: #f2f2f2;
-        }
-
-        .btn {
-            padding: 6px 12px; /* Reduz o padding do botão */
             background-color: #4CAF50;
             color: white;
+        }
+        td {
+            background-color: #f9f9f9;
+        }
+        .section-1 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(2, auto);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .section-1 div {
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+        }
+        @media (max-width: 768px) {
+            .table-container {
+                margin: 10px;
+            }
+            .section-1 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            th, td {
+                font-size: 14px;
+                padding: 8px;
+            }
+            table {
+                font-size: 12px;
+            }
+            .section-1 div {
+                font-size: 12px;
+            }
+        }
+        .table-container {
+            overflow-x: auto;
+            overflow-y: auto;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            margin-top: 8px; /* Adiciona margem superior */
-            font-size: 0.9em; /* Tamanho da fonte menor */
         }
-
-        .btn:hover {
+        button:hover {
             background-color: #45a049;
         }
-
-        button.remove-btn {
-            padding: 4px 6px; /* Reduz o padding do botão remover */
-            background-color: #ff4c4c;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.8em; /* Tamanho da fonte menor */
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
         }
-
-        button.remove-btn:hover {
-            background-color: #e43d3d;
-        }
-
-        @media (max-width: 600px) { /* Ajusta para telas menores */
-            .coluna {
-                flex: 1 1 100%; /* Ocupa toda a largura em telas menores */
-            }
-
-            table {
-                display: block;
-                overflow-x: auto; /* Adiciona barra de rolagem horizontal */
-            }
+        input:focus, select:focus, textarea:focus {
+            border-color: #4CAF50;
+            outline: none;
         }
     </style>
-    <script>
-        function adicionarLinha() {
-    var tabela = document.getElementById("tabela");
-    var novaLinha = tabela.insertRow(-1);
-    var primeiraLinha = tabela.rows[1];
-
-    for (var i = 0; i < primeiraLinha.cells.length - 1; i++) {
-        var novaCelula = novaLinha.insertCell(i);
-        var inputOriginal = primeiraLinha.cells[i].querySelector('input, select, textarea');
-        var novoInput;
-
-        if (inputOriginal.tagName.toLowerCase() === 'select') {
-            novoInput = inputOriginal.cloneNode(true);
-        } else if (inputOriginal.tagName.toLowerCase() === 'textarea') {
-            novoInput = inputOriginal.cloneNode(true);
-        } else {
-            novoInput = inputOriginal.cloneNode();
-        }
-
-        novoInput.name = inputOriginal.name; 
-        novaCelula.appendChild(novoInput);
-    }
-
-    var celulaAcoes = novaLinha.insertCell(primeiraLinha.cells.length - 1);
-    var botaoRemover = document.createElement('button');
-    botaoRemover.textContent = 'Remover';
-    botaoRemover.type = 'button';
-    botaoRemover.setAttribute('onclick', 'removerLinha(this)');
-    celulaAcoes.appendChild(botaoRemover);
-}
-
-function removerLinha(botao) {
-    var linha = botao.parentNode.parentNode;
-    linha.parentNode.removeChild(linha);
-}
-
-function validarFormulario() {
-    var tabela = document.getElementById("tabela");
-    var linhas = tabela.rows;
-    for (var i = 1; i < linhas.length; i++) {
-        var inputs = linhas[i].querySelectorAll('input, select, textarea');
-        for (var j = 0; j < inputs.length; j++) {
-            if (inputs[j].value === "" && inputs[j].hasAttribute('required')) {
-                alert("Por favor, preencha todos os campos obrigatórios!");
-                return false;
+    
+          <script>
+            // Função para adicionar uma nova linha na tabela
+            function adicionarLinha() {
+                const tabela = document.getElementById("tabela");
+                if (tabela.rows.length < 2) {
+                    console.error('Nenhuma linha modelo encontrada!');
+                    return;
+                }
+    
+                const novaLinha = tabela.insertRow(-1);
+                const primeiraLinha = tabela.rows[1];
+    
+                for (let i = 0; i < primeiraLinha.cells.length - 1; i++) {
+                    const novaCelula = novaLinha.insertCell(i);
+                    const inputOriginal = primeiraLinha.cells[i].querySelector('input, select, textarea');
+                    const novoInput = inputOriginal.cloneNode(true);
+                    novoInput.value = ""; // Limpa o valor do novo input
+                    novaCelula.appendChild(novoInput);
+                }
+    
+                const celulaAcoes = novaLinha.insertCell(primeiraLinha.cells.length - 1);
+                const botaoRemover = document.createElement('button');
+                botaoRemover.textContent = 'Remover';
+                botaoRemover.type = 'button';
+                botaoRemover.setAttribute('onclick', 'removerLinha(this)');
+                celulaAcoes.appendChild(botaoRemover);
             }
-        }
-    }
-    return true;
-}
-    </script>
-</head>
-<body>
-    <h2>Cadastro de Fiscalização</h2>
-    <p>* Campos obrigatórios</p>
+    
+            // Função para remover uma linha da tabela
+            function removerLinha(botao) {
+                if (confirm('Tem certeza que deseja remover esta linha?')) {
+                    const linha = botao.parentNode.parentNode;
+                    linha.parentNode.removeChild(linha);
+                }
+            }
+    
+            // Função para validar o formulário
+            function validarFormulario() {
+                const tabela = document.getElementById("tabela");
+                const linhas = tabela.rows;
+                let valido = true;
+    
+                for (let i = 1; i < linhas.length; i++) {
+                    const inputs = linhas[i].querySelectorAll('input, select, textarea');
+                    for (let j = 0; j < inputs.length; j++) {
+                        if (inputs[j].value === "" && inputs[j].hasAttribute('required')) {
+                            inputs[j].style.border = '1px solid red'; // Destaca o campo inválido
+                            valido = false;
+                        } else {
+                            inputs[j].style.border = ''; // Remove o destaque se o campo estiver válido
+                        }
+                    }
+                }
+    
+                if (!valido) {
+                    alert("Por favor, preencha todos os campos obrigatórios!");
+                }
+                return valido;
+            }
+               
 
-    <form action="{% url 'home' %}" method="POST" onsubmit="return validarFormulario()">
+        </script>
+    </head>
+     <body>
+        <h2>Cadastro de Fiscalização</h2>
+        <p>* Campos obrigatórios</p>
+    
+        <form id="meu-formulario" action="{% url 'home' %}" method="POST" onsubmit="return validarFormulario()">
         {% csrf_token %}
 
         <!-- Seção 1: Informações Gerais da UT -->
@@ -190,6 +176,10 @@ function validarFormulario() {
                 <div class="coluna">
                     <label for="codigo_ut">Código da UT *</label>
                     <input type="number" id="codigo_ut" name="codigo_ut" required>
+                </div>
+                <div class="coluna">
+                    <label for="ui">Unidade de Interveção (UI) *</label>
+                    <input type="number" id="ui" name="ui" required>
                 </div>
                 <div class="coluna">
                     <label for="municipio">Município *</label>
@@ -217,8 +207,25 @@ function validarFormulario() {
             </div>
             <div class="linha">
                 <div class="coluna">
-                    <label for="fiscal_responsavel">Fiscal Responsável *</label>
-                    <input type="text" id="fiscal_responsavel" name="fiscal_responsavel" required>
+                    <label for="fiscal_responsavel">Fiscal *</label>
+                    <select id="fiscal_responsavel" name="fiscal_responsavel" required>
+                        <option value="">Selecione</option>
+                        <option value="andre_b">André B.</option>
+                        <option value="alan_z">Alan Z.</option>
+                        <option value="bruno_l">Bruno L.</option>
+                        <option value="cristhiam_r">Cristhiam R.</option>
+                        <option value="diego_b">Diego B.</option>
+                        <option value="fabrina_n">Fabrina N.</option>
+                        <option value="felipe_b">Felipe B.</option>
+                        <option value="graciane_c">Graciane C.</option>
+                        <option value="joao_b">João B.</option>
+                        <option value="kelwin_l">Kelwin L.</option>
+                        <option value="rafael_p">Rafael P.</option>
+                        <option value="samuel_o">Samuel O.</option>
+                        <option value="tercio_p">Tercio P.</option>
+                        <option value="thiago_d">Thiago D.</option>
+                        <option value="vinicius_d">Vinicius D.</option>
+                    </select>
                 </div>
                 <div class="coluna">
                     <label for="mes_medicao">Mês de Medição *</label>
@@ -239,12 +246,20 @@ function validarFormulario() {
                     </select>
                 </div>
                 <div class="coluna">
-                    <label for="tecnica">Técnica *</label>
+                    <label for="tecnica">Método *</label>
                     <select id="tecnica" name="metodo" required>
                         <option value="">Selecione</option>
                         <option value="CRN">CRN</option>
                         <option value="PT">PT</option>
                     </select>
+                    <div class="coluna">
+                        <label for="parcela_t">Dimensão da Parcela *</label>
+                        <select id="parcela_t" name="parcela_t" required>
+                            <option value="">Selecione</option>
+                            <option value="4x25m">4x25m</option>
+                            <option value="6x10m">6x10m</option>
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>
@@ -256,12 +271,12 @@ function validarFormulario() {
                     <th style="width: 10%;">ID Parcela *</th>
                     <th style="width: 10%;">Fase *</th>
                     <th style="width: 10%;">Atividade *</th>
-                    <th style="width: 10%;">Área Medição (ha) *</th>
+                    <th style="width: 10%;">Área Medição (ha)</th>
                     <th style="width: 10%;">Espaçamento</th>
                     <th style="width: 10%;">Nota</th>
-                    <th style="width: 10%;">Quantidade</th>
+                    <th style="width: 10%;">Contagem</th>
                     <th style="width: 10%;">Observação</th>
-                    <th style="width: 5%;">Ações</th>
+                    <th style="width: 5%;"></th>
                 </tr>
             </thead>
             <tbody>
@@ -292,7 +307,7 @@ function validarFormulario() {
                             <option value="coroamento">Coroamento</option>
                         </select>
                     </td>
-                    <td><input type="number" name="area_medicao_ha[]" step="0.0001" required></td>
+                    <td><input type="number" name="area_medicao_ha[]"></td>
                     <td><input type="text" name="espacamento[]"></td>
                     <td>
                         <select name="nota[]">
@@ -302,7 +317,7 @@ function validarFormulario() {
                             <option value="adequado_100">Adequado (100%)</option>
                         </select>
                     </td>
-                    <td><input type="number" name="quantidade[]" required></td>
+                    <td><input type="number" name="quantidade[]"></td>
                     <td><textarea name="observacao[]"></textarea></td>
                     <td><button type="button" onclick="removerLinha(this)">Remover</button></td>
                 </tr>
@@ -311,5 +326,9 @@ function validarFormulario() {
         <button type="button" onclick="adicionarLinha()">Adicionar Linha</button><br><br>
         <button type="submit" class="btn">Salvar</button>
     </form>
+     
+        <script src="/static/js/app.js" defer></script>
+    <script src="/static/js/indexedDB.js" defer></script>
+    
 </body>
 </html>

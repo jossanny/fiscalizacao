@@ -6,6 +6,8 @@ class formulario_1(forms.Form):
     class Meta:
         model = Fiscalizacao
         fields = ['codigo_propriedade',
+            'ui',
+            'parcela_t',
             'codigo_ut',
             'fiscal_responsavel',
             'municipio',

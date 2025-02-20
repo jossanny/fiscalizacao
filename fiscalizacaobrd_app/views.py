@@ -5,6 +5,9 @@ from django.core.exceptions import ValidationError
 from django.contrib import messages
 import json
 from .models import Fiscalizacao
+from django.http import FileResponse
+import os
+from django.conf import settings
 
 
 @csrf_exempt
@@ -138,5 +141,8 @@ def sync_data(request):
     return JsonResponse({"status": "error", "message": "Método não permitido"}, status=405)
 
         
+def service_worker(request):
+    sw_path = os.path.join(settings.BASE_DIR, 'sw.js')  # Caminho absoluto para `sw.js`
+    return FileResponse(open(sw_path, 'rb'), content_type='application/javascript')
 
 

@@ -1,9 +1,13 @@
-const CACHE_NAME = "fiscalizacao-cache-v17"; // Incrementa a versão do cache
+//sw.js
+
+const CACHE_NAME = "fiscalizacao-cache-v25"; // Incrementa a versão do cache
 const urlsToCache = [
     "/",
     "/static/js/app.js",
-    "/static/js/indexedDB.js",
+    "/static/js/indexeddb.js",
     "/static/manifest.json", // Se você tiver um manifest.json
+    "/static/img/192.png",
+    "/static/img/512.png",
 ];
 
 // Instalação do Service Worker e cache de recursos estáticos

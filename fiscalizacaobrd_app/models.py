@@ -78,7 +78,7 @@ class Fiscalizacao(models.Model):
 
     # Campos Existentes
     
-    codigo_propriedade = models.CharField(max_length=10, blank=True, null=True)
+    codigo_propriedade = models.CharField(max_length=10, blank=False, null=False)
     codigo_ut = models.IntegerField(blank=True, null=True)
     fiscal_responsavel = models.CharField(max_length=50, choices=OPCOES_FISCAIS, blank=True, null=True)
     municipio = models.CharField(
